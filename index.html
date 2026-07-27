@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pencarian Jadwal Zoom</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    margin:15px;
+    background:#f5f5f5;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 0 5px #ccc;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:5px 0 15px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    font-size:16px;
+    background:#2196F3;
+    color:white;
+    border:none;
+    border-radius:6px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    background:white;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:8px;
+    text-align:left;
+}
+
+th{
+    background:#2196F3;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Filter Data</h2>
+
+<label>dari tanggal</label>
+<input id="g1" type="date">
+
+<label>sampai tanggal</label>
+<input id="h1" type="date">
+
+<button onclick="cari()">Cari</button>
+
+</div>
+
+<table id="hasil">
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Pengisi</th>
+<th>Acara</th>
+<th>Tanggal</th>
+<th>Jam</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+</table>
+
+<script>
+
+const url="https://script.google.com/macros/s/AKfycbyvFDrd2LI2kUUZ0_v8QXgwYTObIwhtNl0z6kkpD-20sSiWYAsYhaEjdYgwk_9QhN8h/exec";
+
+function cari(){
+
+let g=document.getElementById("g1").value;
+let h=document.getElementById("h1").value;
+
+fetch(url,{
+method:"POST",
+body:JSON.stringify({
+g1:g,
+h1:h
+})
+})
+.then(r=>r.json())
+.then(data=>{
+
+let tbody=document.querySelector("#hasil tbody");
+tbody.innerHTML="";
+
+data.forEach(row=>{
+
+let tr=document.createElement("tr");
+
+row.forEach(col=>{
+
+let td=document.createElement("td");
+td.innerText=col;
+tr.appendChild(td);
+
+});
+
+tbody.appendChild(tr);
+
+});
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
