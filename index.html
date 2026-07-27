@@ -6,52 +6,88 @@
 <title>Pencarian Jadwal Zoom</title>
 
 <style>
-body{
-    font-family:Arial,sans-serif;
-    margin:15px;
-    background:#f5f5f5;
+/* 1. Atur box-sizing agar padding tidak merusak ukuran lebar (width) */
+* {
+    box-sizing: border-box;
 }
 
-.card{
-    background:white;
-    padding:15px;
-    border-radius:10px;
-    box-shadow:0 0 5px #ccc;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 15px;
+    background: #f5f5f5;
 }
 
-input{
-    width:100%;
-    padding:10px;
-    margin:5px 0 15px;
-    font-size:16px;
+.card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px #ccc;
+    margin-bottom: 20px;
 }
 
-button{
-    width:100%;
-    padding:12px;
-    font-size:16px;
-    background:#2196F3;
-    color:white;
-    border:none;
-    border-radius:6px;
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 100px;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-    background:white;
+label:first-of-type {
+    margin-top: 0;
 }
 
-th,td{
-    border:1px solid #ddd;
-    padding:8px;
-    text-align:left;
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }
 
-th{
-    background:#2196F3;
-    color:white;
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:active {
+    background: #1e88e5;
+}
+
+/* 2. Container khusus tabel dengan scroll horizontal aman */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 5px #ccc;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    white-space: nowrap; /* Mencegah baris teks pecah berantakan */
+}
+
+th {
+    background: #2196F3;
+    color: white;
 }
 </style>
 </head>
@@ -59,81 +95,71 @@ th{
 <body>
 
 <div class="card">
+    <h2 style="margin-top:0;">Cek Jadwal Zoom</h2>
 
-<h2>Filter Data</h2>
+    <label for="g1">Dari Tanggal</label>
+    <input id="g1" type="date">
 
-<label>dari tanggal</label>
-<input id="g1" type="date">
+    <label for="h1">Sampai Tanggal</label>
+    <input id="h1" type="date">
 
-<label>sampai tanggal</label>
-<input id="h1" type="date">
-
-<button onclick="cari()">Cari</button>
-
+    <button onclick="cari()">Cari</button>
 </div>
 
-<table id="hasil">
-<thead>
-<tr>
-<th>Tanggal</th>
-<th>Pengisi</th>
-<th>Acara</th>
-<th>Tanggal</th>
-<th>Jam</th>
-</tr>
-</thead>
-
-<tbody></tbody>
-</table>
+<!-- Tabel dibungkus div container agar tidak merusak layout layar HP -->
+<div class="table-container">
+    <table id="hasil">
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Pengisi</th>
+                <th>Acara</th>
+                <th>Tanggal</th>
+                <th>Jam</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
 
 <script>
+const url = "https://script.google.com/macros/s/AKfycbxemfxEYOnMW1CmEKKF27I329E8KXSaUJQFFiMDwAmqoInYUm0EwPmnuxeG75OwxPQV/exec";
 
-const url="https://script.google.com/macros/s/AKfycbxemfxEYOnMW1CmEKKF27I329E8KXSaUJQFFiMDwAmqoInYUm0EwPmnuxeG75OwxPQV/exec";
+function cari() {
+    let g = document.getElementById("g1").value;
+    let h = document.getElementById("h1").value;
 
-function cari(){
-
-let g=document.getElementById("g1").value;
-let h=document.getElementById("h1").value;
-
-fetch(url,{
-    method:"POST",
-    body:JSON.stringify({
-        g1:g,
-        h1:h
+    fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+            g1: g,
+            h1: h
+        })
     })
-})
-.then(r=>r.json())
-.then(data=>{
+    .then(r => r.json())
+    .then(data => {
+        console.log(data);
 
-    console.log(data);
+        let tbody = document.querySelector("#hasil tbody");
+        tbody.innerHTML = "";
 
-    let tbody=document.querySelector("#hasil tbody");
-    tbody.innerHTML="";
+        data.forEach(row => {
+            let tr = document.createElement("tr");
 
-    data.forEach(row=>{
+            row.forEach(col => {
+                let td = document.createElement("td");
+                td.innerText = col;
+                tr.appendChild(td);
+            });
 
-        let tr=document.createElement("tr");
-
-        row.forEach(col=>{
-
-            let td=document.createElement("td");
-            td.innerText=col;
-            tr.appendChild(td);
-
+            tbody.appendChild(tr);
         });
-
-        tbody.appendChild(tr);
-
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Terjadi kesalahan saat mengambil data.");
     });
-
-})
-.catch(err=>{
-    console.error(err);
-    alert(err);
-});
-
 }
-
 </script>
 
 </body>
