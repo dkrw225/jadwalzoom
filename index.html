@@ -96,34 +96,43 @@ let g=document.getElementById("g1").value;
 let h=document.getElementById("h1").value;
 
 fetch(url,{
-method:"POST",
-body:JSON.stringify({
-g1:g,
-h1:h
-})
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+        g1:g,
+        h1:h
+    })
 })
 .then(r=>r.json())
 .then(data=>{
 
-let tbody=document.querySelector("#hasil tbody");
-tbody.innerHTML="";
+    console.log(data);
 
-data.forEach(row=>{
+    let tbody=document.querySelector("#hasil tbody");
+    tbody.innerHTML="";
 
-let tr=document.createElement("tr");
+    data.forEach(row=>{
 
-row.forEach(col=>{
+        let tr=document.createElement("tr");
 
-let td=document.createElement("td");
-td.innerText=col;
-tr.appendChild(td);
+        row.forEach(col=>{
 
-});
+            let td=document.createElement("td");
+            td.innerText=col;
+            tr.appendChild(td);
 
-tbody.appendChild(tr);
+        });
 
-});
+        tbody.appendChild(tr);
 
+    });
+
+})
+.catch(err=>{
+    console.error(err);
+    alert(err);
 });
 
 }
