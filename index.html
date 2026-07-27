@@ -6,7 +6,6 @@
 <title>Pencarian Jadwal Zoom</title>
 
 <style>
-/* 1. Atur box-sizing agar padding tidak merusak ukuran lebar (width) */
 * {
     box-sizing: border-box;
 }
@@ -26,12 +25,17 @@ body {
     margin-bottom: 20px;
 }
 
+h2 {
+    margin-top: 0;
+    color: #333;
+}
+
 label {
     display: block;
     font-size: 14px;
     font-weight: bold;
     color: #333;
-    margin-top: 100px;
+    margin-top: 10px;
 }
 
 label:first-of-type {
@@ -59,11 +63,10 @@ button {
     cursor: pointer;
 }
 
-button:active {
-    background: #1e88e5;
+button:disabled {
+    background: #aaa;
 }
 
-/* 2. Container khusus tabel dengan scroll horizontal aman */
 .table-container {
     width: 100%;
     overflow-x: auto;
@@ -82,7 +85,7 @@ th, td {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: left;
-    white-space: nowrap; /* Mencegah baris teks pecah berantakan */
+    white-space: nowrap;
 }
 
 th {
@@ -95,7 +98,7 @@ th {
 <body>
 
 <div class="card">
-    <h2 style="margin-top:0;">Cek Jadwal Zoom</h2>
+    <h2>Cek Jadwal Zoom</h2>
 
     <label for="g1">Dari Tanggal</label>
     <input id="g1" type="date">
@@ -103,18 +106,17 @@ th {
     <label for="h1">Sampai Tanggal</label>
     <input id="h1" type="date">
 
-    <button onclick="cari()">Cari</button>
+    <button id="btnCari" onclick="cari()">Cari</button>
 </div>
 
-<!-- Tabel dibungkus div container agar tidak merusak layout layar HP -->
 <div class="table-container">
     <table id="hasil">
         <thead>
             <tr>
-                <th>Tanggal</th>
+                <th>Tanggal Input</th>
                 <th>Pengisi</th>
                 <th>Acara</th>
-                <th>Tanggal</th>
+                <th>Tanggal Acara</th>
                 <th>Jam</th>
             </tr>
         </thead>
@@ -123,41 +125,50 @@ th {
 </div>
 
 <script>
-const url = "https://script.google.com/macros/s/AKfycbxemfxEYOnMW1CmEKKF27I329E8KXSaUJQFFiMDwAmqoInYUm0EwPmnuxeG75OwxPQV/exec";
+const url = "https://script.google.com/macros/s/AKfycbzq6af-uvGDFcEdZ5xK-0c3ZR_T4CIdeMwaYfoXFt0EZnP5mTlrhkb99-BDleBmMTou/exec";
 
 function cari() {
     let g = document.getElementById("g1").value;
     let h = document.getElementById("h1").value;
+    let btn = document.getElementById("btnCari");
+    let tbody = document.querySelector("#hasil tbody");
 
-    fetch(url, {
-        method: "POST",
-        body: JSON.stringify({
-            g1: g,
-            h1: h
-        })
-    })
+    // Status loading
+    btn.innerText = "Memuat...";
+    btn.disabled = true;
+    tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Sedang mencari data...</td></tr>";
+
+    // Kirim via GET parameter (jauh lebih cepat daripada POST)
+    let queryUrl = `${url}?g1=${encodeURIComponent(g)}&h1=${encodeURIComponent(h)}`;
+
+    fetch(queryUrl)
     .then(r => r.json())
     .then(data => {
-        console.log(data);
-
-        let tbody = document.querySelector("#hasil tbody");
         tbody.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Data tidak ditemukan</td></tr>";
+            return;
+        }
 
         data.forEach(row => {
             let tr = document.createElement("tr");
-
             row.forEach(col => {
                 let td = document.createElement("td");
                 td.innerText = col;
                 tr.appendChild(td);
             });
-
             tbody.appendChild(tr);
         });
     })
     .catch(err => {
         console.error(err);
-        alert("Terjadi kesalahan saat mengambil data.");
+        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:red;'>Gagal memuat data</td></tr>";
+        alert("Gagal mengambil data: " + err);
+    })
+    .finally(() => {
+        btn.innerText = "Cari";
+        btn.disabled = false;
     });
 }
 </script>
