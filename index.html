@@ -335,6 +335,23 @@
         // =========================
         // TAMPIL TABEL
         // =========================
+        function formatJam(jam) {
+            if (!jam) return "";
+        
+            // Jika format ISO Date dari GAS
+            if (jam.includes("T")) {
+                return new Date(jam).toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false
+                });
+            }
+        
+            // Jika sudah HH:mm:ss atau HH:mm
+            return jam.substring(0, 8);
+        }    
+        
         function tampilTabel(data) {
             let html = "";
 
@@ -350,7 +367,7 @@
                         <td>${aman(r.pengguna)}</td>
                         <td>${aman(r.acara)}</td>
                         <td>${r.tanggal}</td>
-                        <td>${r.jam}</td>
+                        <td>${formatJam(r.jam)}</td>
                     </tr>`;
                 });
             }
