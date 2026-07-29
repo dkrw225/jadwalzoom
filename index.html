@@ -343,13 +343,12 @@
                 return new Date(jam).toLocaleTimeString("id-ID", {
                     hour: "2-digit",
                     minute: "2-digit",
-                    second: "2-digit",
                     hour12: false
                 });
             }
         
             // Jika sudah HH:mm:ss atau HH:mm
-            return jam.substring(0, 8);
+            return jam.substring(0, 5);
         }    
         
         function tampilTabel(data) {
