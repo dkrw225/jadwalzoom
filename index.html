@@ -118,6 +118,15 @@
             background: #94a3b8;
         }
 
+        .btn-toggle {
+            background: #2e7d32;
+            margin-bottom: 0px;
+        }
+
+        .btn-toggle:hover {
+            background: #1b5e20;
+        }
+
         /* =========================
            SEARCH
         ========================= */
@@ -259,65 +268,69 @@
              FORM INPUT
         ========================= -->
         <div class="card">
-
-            <label>
-                Pengguna - ID Sektor + ID Kelas + ID Anggota
-            </label>
-
-            <!--
-                Datalist membuat pengguna yang pernah digunakan
-                bisa dipilih kembali.
-            -->
-            <input
-                id="pengguna"
-                type="text"
-                placeholder="Contoh: RWIA307TUT01"
-                autocomplete="off"
-                list="daftarPengguna"
-            >
-
-            <datalist id="daftarPengguna"></datalist>
-
-
-            <label>Acara</label>
-
-            <input
-                id="acara"
-                type="text"
-                placeholder="Nama acara"
-            >
-
-
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-
-                <div>
-                    <label>Tanggal</label>
-
-                    <input
-                        id="tanggal"
-                        type="date"
-                    >
-                </div>
-
-                <div>
-                    <label>Jam</label>
-
-                    <input
-                        id="jam"
-                        type="time"
-                    >
-                </div>
-
-            </div>
-
-
-            <button
-                id="btnSimpan"
-                onclick="simpan()"
-            >
-                Simpan
+            <button id="btnToggleForm" class="btn-toggle" onclick="toggleForm()">
+                ➕ Input Jadwal
             </button>
 
+            <div id="formContainer" style="display: none; margin-top: 14px;">
+                <label>
+                    Pengguna - ID Sektor + ID Kelas + ID Anggota
+                </label>
+
+                <!--
+                    Datalist membuat pengguna yang pernah digunakan
+                    bisa dipilih kembali.
+                -->
+                <input
+                    id="pengguna"
+                    type="text"
+                    placeholder="Contoh: RWIA307TUT01"
+                    autocomplete="off"
+                    list="daftarPengguna"
+                >
+
+                <datalist id="daftarPengguna"></datalist>
+
+
+                <label>Acara</label>
+
+                <input
+                    id="acara"
+                    type="text"
+                    placeholder="Nama acara"
+                >
+
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+
+                    <div>
+                        <label>Tanggal</label>
+
+                        <input
+                            id="tanggal"
+                            type="date"
+                        >
+                    </div>
+
+                    <div>
+                        <label>Jam</label>
+
+                        <input
+                            id="jam"
+                            type="time"
+                        >
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="btnSimpan"
+                    onclick="simpan()"
+                >
+                    Simpan
+                </button>
+            </div>
         </div>
 
 
@@ -440,6 +453,24 @@
                 });
 
         });
+
+
+        // =========================
+        // TOGGLE FORM INPUT
+        // =========================
+
+        function toggleForm() {
+            let formContainer = document.getElementById("formContainer");
+            let btnToggle = document.getElementById("btnToggleForm");
+
+            if (formContainer.style.display === "none") {
+                formContainer.style.display = "block";
+                btnToggle.innerHTML = "➖ Tutup Form Input";
+            } else {
+                formContainer.style.display = "none";
+                btnToggle.innerHTML = "➕ Input Jadwal";
+            }
+        }
 
 
         // =========================
@@ -571,14 +602,14 @@
         // =========================
         // FORMAT JAM
         // =========================
-function formatJam(jam) {
+        function formatJam(jam) {
 
-    if (!jam) return "";
+            if (!jam) return "";
 
-    let str = String(jam);
+            let str = String(jam);
 
-	return str.substring(16, 20) + "0 WIB";
-}
+            return str.substring(16, 20) + "0 WIB";
+        }
 
 
         // =========================
